@@ -4,7 +4,7 @@ var httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler()));
 httpClient.BaseAddress = new Uri("https://azuresearch-usnc.nuget.org/");
 
 var client = new NuGetInfoClient(httpClient);
-var result = await client.SearchManyAsync(new []
+var projects = await client.SearchManyAsync(new []
 {
     "dapper.qx",
     "ao.dapper.repository",
@@ -13,13 +13,14 @@ var result = await client.SearchManyAsync(new []
     "excel2sqlserver"
 });
 
-foreach (var project in result.SelectMany(sr => sr.data.Select(prj => new
+foreach (var authorGrp in projects.GroupBy(item => item.AuthorText))
 {
-    prj.packageId,
-    prj.totalDownloads
-})))
-{
-    Console.WriteLine($"{project.packageId}, total downloads {project.totalDownloads:n0}");
+    Console.WriteLine();
+    Console.WriteLine(string.Join(", ", authorGrp.Key));
+    foreach (var prj in authorGrp)
+    {
+        Console.WriteLine($"- {prj.packageId}, total downloads {prj.totalDownloads:n0}");
+    }    
 }
 
 

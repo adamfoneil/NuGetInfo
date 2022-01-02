@@ -39,6 +39,8 @@ namespace NuGetInfo.Client.Models
         public bool verified { get; set; }
         public Packagetype[] packageTypes { get; set; }
         public Version[] versions { get; set; }
+
+        public string AuthorText => string.Join(", ", authors);
     }
 
     public class Packagetype

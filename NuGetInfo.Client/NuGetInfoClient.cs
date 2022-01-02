@@ -18,16 +18,16 @@ namespace NuGetInfo.Client
             _api = RestService.For<INuGetClient>("https://azuresearch-usnc.nuget.org/");
         }
 
-        public async Task<SearchResults> SearchAsync(string query) => await _api.SearchAsync(query);
+        public async Task<IEnumerable<Project>> SearchProjectsAsync(string query) => (await _api.SearchAsync(query)).data;
 
-        public async Task<IEnumerable<SearchResults>> SearchManyAsync(IEnumerable<string> queries)
+        public async Task<IEnumerable<Project>> SearchManyAsync(IEnumerable<string> queries)
         {
-            List<SearchResults> results = new();
+            List<Project> results = new();
 
             foreach (var query in queries)
             {
-                var result = await _api.SearchAsync(query);
-                results.Add(result);
+                var projects = await SearchProjectsAsync(query);
+                results.AddRange(projects);
             }
 
             return results;
