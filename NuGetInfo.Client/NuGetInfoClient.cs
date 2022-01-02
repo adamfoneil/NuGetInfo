@@ -32,5 +32,8 @@ namespace NuGetInfo.Client
 
             return results;
         }
+
+        public async Task<IEnumerable<Project>> SearchPackageIdsAsync(IEnumerable<string> packageIds) =>
+            (await SearchManyAsync(packageIds)).Where(prj => packageIds.Contains(prj.packageId));        
     }
 }

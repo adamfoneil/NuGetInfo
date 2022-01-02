@@ -4,13 +4,14 @@ var httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler()));
 httpClient.BaseAddress = new Uri("https://azuresearch-usnc.nuget.org/");
 
 var client = new NuGetInfoClient(httpClient);
-var projects = await client.SearchManyAsync(new []
+var projects = await client.SearchPackageIdsAsync(new []
 {
-    "dapper.qx",
-    "ao.dapper.repository",
-    "ao.models",
-    "datatables.library",
-    "excel2sqlserver"
+    "Dapper.QX",
+    "AO.Dapper.Repository",
+    "AO.Models",
+    "DataTables.Library",
+    "Excel2SqlServer",
+    "SqlServer.LocalDb.Testing"
 });
 
 foreach (var authorGrp in projects.GroupBy(item => item.AuthorText))
@@ -22,7 +23,6 @@ foreach (var authorGrp in projects.GroupBy(item => item.AuthorText))
         Console.WriteLine($"- {prj.packageId}, total downloads {prj.totalDownloads:n0}");
     }    
 }
-
 
 /// <summary>
 /// help from https://stackoverflow.com/a/18925296/2023653
