@@ -6,12 +6,12 @@ httpClient.BaseAddress = new Uri("https://azuresearch-usnc.nuget.org/");
 var client = new NuGetInfoClient(httpClient);
 var projects = await client.SearchPackageIdsAsync(new []
 {
-    "Dapper.QX",
-    "AO.Dapper.Repository",
+    "Dapper.QX",    
     "AO.Models",
     "DataTables.Library",
     "Excel2SqlServer",
-    "SqlServer.LocalDb.Testing"
+    "SqlServer.LocalDb.Testing",
+    "AO.Dapper.Repository.SqlServer"
 });
 
 foreach (var authorGrp in projects.GroupBy(item => item.AuthorText))
