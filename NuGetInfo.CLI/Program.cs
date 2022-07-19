@@ -11,7 +11,9 @@ var projects = await client.SearchPackageIdsAsync(new []
     "DataTables.Library",
     "Excel2SqlServer",
     "SqlServer.LocalDb.Testing",
-    "AO.Dapper.Repository.SqlServer"
+    "AO.Dapper.Repository.SqlServer",
+    "AO.Mailgun",
+    "AO.Smtp2Go"
 });
 
 foreach (var authorGrp in projects.GroupBy(item => item.AuthorText))
