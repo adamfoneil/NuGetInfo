@@ -1,6 +1,7 @@
 ﻿using NuGetInfo.Client;
 
-var httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler()));
+//var httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler()));
+var httpClient = new HttpClient();
 httpClient.BaseAddress = new Uri("https://azuresearch-usnc.nuget.org/");
 
 var client = new NuGetInfoClient(httpClient);
@@ -20,7 +21,7 @@ foreach (var authorGrp in projects.GroupBy(item => item.AuthorText))
 {
     Console.WriteLine();
     Console.WriteLine(string.Join(", ", authorGrp.Key));
-    foreach (var prj in authorGrp)
+    foreach (var prj in authorGrp.OrderBy(p => p.packageId))
     {
         Console.WriteLine($"- {prj.packageId}, total downloads {prj.totalDownloads:n0}");
     }    
