@@ -1,4 +1,9 @@
-﻿using NuGetInfo.Client;
+﻿using Microsoft.Extensions.Configuration;
+using NuGetInfo.Client;
+
+var builder = new ConfigurationBuilder();
+builder.AddCommandLine(args);
+var config = builder.Build();
 
 //var httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler()));
 var httpClient = new HttpClient();
@@ -25,6 +30,13 @@ foreach (var authorGrp in projects.GroupBy(item => item.AuthorText))
     {
         Console.WriteLine($"- {prj.packageId}, total downloads {prj.totalDownloads:n0}");
     }    
+}
+
+if (config.WaitForInput())
+{
+    Console.WriteLine();
+    Console.WriteLine("Press any key to exit.");
+    Console.Read();
 }
 
 /// <summary>
