@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using NuGetInfo.CLI.Implementation;
 using NuGetInfo.Client;
 
 var builder = new ConfigurationBuilder();
@@ -21,6 +22,12 @@ var projects = await client.SearchPackageIdsAsync(new []
     "AO.Mailgun",
     "AO.Smtp2Go"
 });
+
+var cache = new AppData();
+var latestMetrics = await GetLatestPackageMetricsAsync(cache);
+await CachePackageMetricsAsync(projects, cache);
+var currentMetrics = CurrentDownloadMetrics(projects);
+var deltas = GetDownloadCountDeltas(latestMetrics, currentMetrics);
 
 foreach (var authorGrp in projects.GroupBy(item => item.AuthorText))
 {
