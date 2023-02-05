@@ -27,7 +27,7 @@ var cache = new AppData();
 var latestMetrics = await GetLatestPackageMetricsAsync(cache);
 await CachePackageMetricsAsync(projects, cache);
 var currentMetrics = CurrentDownloadMetrics(projects);
-var deltas = GetDownloadCountDeltas(latestMetrics, currentMetrics);
+var deltas = GetDownloadCountDeltas(latestMetrics, currentMetrics); //todo: get the delta info into the output
 
 foreach (var authorGrp in projects.GroupBy(item => item.AuthorText))
 {
