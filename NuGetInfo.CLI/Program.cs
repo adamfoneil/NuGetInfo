@@ -36,8 +36,13 @@ foreach (var authorGrp in projects.GroupBy(item => item.AuthorText))
     int maxWidth = authorGrp.Max(p => p.packageId.Length) + 2;
     int maxDownloadChars = authorGrp.Max(p => p.totalDownloads.ToString().Length) + 2;
     foreach (var prj in authorGrp.OrderBy(p => p.packageId))
-    {        
-        Console.WriteLine($"- {prj.packageId.PadRight(maxWidth, '.')}{prj.totalDownloads.ToString("n0").PadLeft(maxDownloadChars, '.')}");
+    {
+        var output = $"- {prj.packageId.PadRight(maxWidth, '.')}{prj.totalDownloads.ToString("n0").PadLeft(maxDownloadChars, '.')}";
+        if (deltas.TryGetValue(prj.packageId, out int delta))
+        {
+            output += $" ( +{delta})";
+        }
+        Console.WriteLine(output);
     }    
 }
 
