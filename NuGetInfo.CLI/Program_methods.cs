@@ -5,8 +5,6 @@ using System.Text.Json;
 
 internal partial class Program
 {
-    const string CacheRefFile = "ref.json";
-
     /// <summary>
     /// saves the current download stats for each package with today's timestamp (if not done already)    
     /// </summary>
@@ -21,7 +19,7 @@ internal partial class Program
         // if today's cache has already been written, don't overwrite
         if (File.Exists(outputFile)) return false;
 
-        var data = CurrentDownloadCounts(projects);
+        var data = projects.ToDictionary(p => p.packageId, p => p.totalDownloads);
         var json = JsonSerializer.Serialize(data, new JsonSerializerOptions() { WriteIndented = true });
         await File.WriteAllTextAsync(outputFile, json);
 
@@ -62,21 +60,6 @@ internal partial class Program
                 Delta = latest.Value - current.Value
             })
             .Where(d => d.Delta > 0)
-            .ToDictionary(item => item.PackageId, item => item.Delta);
-    
-    static Dictionary<string, int> CurrentDownloadCounts(IEnumerable<Project> projects) => 
-        projects.ToDictionary(p => p.packageId, p => p.totalDownloads);
-
-    private class Compare
-    {
-        public required Reference Current { get; init; }
-        public required Reference Prior { get; init; }
-        
-        public class Reference
-        {
-            public required string Filename { get; init; }
-            public required DateOnly Date { get; init; }
-        }
-    }
+            .ToDictionary(item => item.PackageId, item => item.Delta);    
 }
 
