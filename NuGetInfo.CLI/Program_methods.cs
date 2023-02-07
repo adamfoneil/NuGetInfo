@@ -84,6 +84,5 @@ internal partial class Program
 
     static Dictionary<string, int> CurrentDownloadMetrics(IEnumerable<Project> projects) => 
         projects.ToDictionary(p => p.packageId, p => p.totalDownloads);
-
 }
 
