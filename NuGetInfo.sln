@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGetInfo.Client", "NuGetinfo.Client\NuGetInfo.Client.csproj", "{DAB00CE6-D2AD-46EE-8BE2-5498F3F01F11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGetInfo.Client", "NuGetinfo.Client\NuGetInfo.Client.csproj", "{DAB00CE6-D2AD-46EE-8BE2-5498F3F01F11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGetInfo.CLI", "NuGetInfo.CLI\NuGetInfo.CLI.csproj", "{BB8C5F58-A1A5-4918-B297-466D0A58BE2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGetInfo.CLI", "NuGetInfo.CLI\NuGetInfo.CLI.csproj", "{BB8C5F58-A1A5-4918-B297-466D0A58BE2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{06E8236F-60BA-43B8-98E8-F00DADF7A890}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{BB8C5F58-A1A5-4918-B297-466D0A58BE2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB8C5F58-A1A5-4918-B297-466D0A58BE2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB8C5F58-A1A5-4918-B297-466D0A58BE2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06E8236F-60BA-43B8-98E8-F00DADF7A890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06E8236F-60BA-43B8-98E8-F00DADF7A890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06E8236F-60BA-43B8-98E8-F00DADF7A890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06E8236F-60BA-43B8-98E8-F00DADF7A890}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

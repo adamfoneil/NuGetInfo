@@ -1,7 +1,8 @@
 {
   "profiles": {
     "NuGetInfo.CLI": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "pause=true"
     }
   }
 }

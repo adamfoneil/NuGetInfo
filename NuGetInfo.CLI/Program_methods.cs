@@ -1,72 +1,60 @@
 ﻿using NuGetInfo.CLI.Interfaces;
+using NuGetInfo.CLI.Static;
 using NuGetInfo.Client.Models;
 using System.Text.Json;
 
 internal partial class Program
 {
-    const string CacheRefFile = "latest.json";
+    const string CacheRefFile = "ref.json";
 
     /// <summary>
     /// saves the current download stats for each package with today's timestamp (if not done already)    
     /// </summary>
-    static async Task CachePackageMetricsAsync(IEnumerable<Project> projects, ICacheInfo cacheInfo)
+    static async Task<bool> CacheDownloadCountsAsync(IEnumerable<Project> projects, ICacheInfo cacheInfo)
     {
-        var fileName = $"package-stats-{cacheInfo.CurrentDate:yyyy-MM-dd}.json";
+        var fileName = $"downloads-{cacheInfo.CurrentDate:yyyy-MM-dd}.json";
         var outputFile = Path.Combine(cacheInfo.LocalPath, fileName);
 
         var folder = Path.GetDirectoryName(outputFile);
         if (!Directory.Exists(folder)) Directory.CreateDirectory(folder!);
 
         // if today's cache has already been written, don't overwrite
-        if (File.Exists(outputFile)) return;
+        if (File.Exists(outputFile)) return false;
 
-        var data = CurrentDownloadMetrics(projects);
+        var data = CurrentDownloadCounts(projects);
         var json = JsonSerializer.Serialize(data, new JsonSerializerOptions() { WriteIndented = true });
         await File.WriteAllTextAsync(outputFile, json);
+
+        return true;        
+    }
+
+    static IEnumerable<(DateOnly Date, string Path)> GetCacheFiles(ICacheInfo cacheInfo)
+    {
+        var files = Directory.GetFiles(cacheInfo.LocalPath, "downloads-*.json", SearchOption.TopDirectoryOnly);
+
+        return files.Select(name => (Parse.DateFromPath(name), name));        
+    }
+
+    static async Task<(DateOnly PriorDate, Dictionary<string, int> PriorDownloads, Dictionary<string, int> LatestDownloads)> GetComparisonFilesAsync(IEnumerable<(DateOnly Date, string Path)> files) 
+    {
+        var twoMostRecent = files.OrderByDescending(info => info.Date).Take(2).ToArray();
         
-        if (cacheInfo.CurrentDate > (await GetMarkerAsync(cacheInfo)).Date)
-        {
-            json = JsonSerializer.Serialize(new DateMarker()
-            {
-                Filename = fileName,
-                Date = cacheInfo.CurrentDate
-            }, new JsonSerializerOptions() { WriteIndented = true });
-
-            await File.WriteAllTextAsync(Path.Combine(cacheInfo.LocalPath, CacheRefFile), json);
-        }
-    }
-
-    static async Task<DateMarker> GetMarkerAsync(ICacheInfo cacheInfo)
-    {
-        var markerFile = Path.Combine(cacheInfo.LocalPath, CacheRefFile);
-        if (File.Exists(markerFile))
-        {
-            var json = await File.ReadAllTextAsync(markerFile);
-            var info = JsonSerializer.Deserialize<DateMarker>(json) ?? throw new Exception("Error deserializing date marker.");
-            return info;
-        }
-
-        return await Task.FromResult(new DateMarker());
-    }
-
-
-    static async Task<Dictionary<string, int>> GetLatestPackageMetricsAsync(ICacheInfo cacheInfo)
-    {
-        var marker = await GetMarkerAsync(cacheInfo);
-        var fileName = Path.Combine(cacheInfo.LocalPath, marker.Filename);
-
-        if (File.Exists(fileName))
+        return 
+        (
+            twoMostRecent[1].Date,
+            await GetDictionaryAsync(twoMostRecent[1].Path),
+            await GetDictionaryAsync(twoMostRecent[0].Path)
+        );
+        
+        async Task<Dictionary<string, int>> GetDictionaryAsync(string fileName)
         {
             var json = await File.ReadAllTextAsync(fileName);
-            var result = JsonSerializer.Deserialize<Dictionary<string, int>>(json) ?? throw new Exception("Error deserializing cache data");
-            return result;
+            return JsonSerializer.Deserialize<Dictionary<string, int>>(json) ?? throw new Exception("Error deserializing cache data");            
         }
-
-        return new();
     }
 
-    static Dictionary<string, int> GetDownloadCountDeltas(Dictionary<string, int> latestMetrics, Dictionary<string, int> currentMetrics) =>
-        latestMetrics.Join(currentMetrics, 
+    static Dictionary<string, int> GetDownloadCountDeltas(Dictionary<string, int> priorDownloads, Dictionary<string, int> currentDownloads) =>
+        priorDownloads.Join(currentDownloads, 
             kp => kp.Key, kp => kp.Key, 
             (current, latest) => new
             {
@@ -76,13 +64,19 @@ internal partial class Program
             .Where(d => d.Delta > 0)
             .ToDictionary(item => item.PackageId, item => item.Delta);
     
-    private class DateMarker
-    {
-        public string Filename { get; set; } = default!;
-        public DateOnly Date { get; set; }
-    }
-
-    static Dictionary<string, int> CurrentDownloadMetrics(IEnumerable<Project> projects) => 
+    static Dictionary<string, int> CurrentDownloadCounts(IEnumerable<Project> projects) => 
         projects.ToDictionary(p => p.packageId, p => p.totalDownloads);
+
+    private class Compare
+    {
+        public required Reference Current { get; init; }
+        public required Reference Prior { get; init; }
+        
+        public class Reference
+        {
+            public required string Filename { get; init; }
+            public required DateOnly Date { get; init; }
+        }
+    }
 }
 

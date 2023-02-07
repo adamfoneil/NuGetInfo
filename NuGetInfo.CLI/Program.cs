@@ -24,10 +24,18 @@ var projects = await client.SearchPackageIdsAsync(new []
 });
 
 var cache = new AppData();
-var latestMetrics = await GetLatestPackageMetricsAsync(cache);
-await CachePackageMetricsAsync(projects, cache);
-var currentMetrics = CurrentDownloadMetrics(projects);
-var deltas = GetDownloadCountDeltas(latestMetrics, currentMetrics);
+await CacheDownloadCountsAsync(projects, cache);
+var files = GetCacheFiles(cache);
+DateOnly? priorDate = null;
+
+Dictionary<string, int> deltas = new();
+
+if (files.Count() >= 2)
+{
+    var comparison = await GetComparisonFilesAsync(files);
+    deltas = GetDownloadCountDeltas(comparison.PriorDownloads, comparison.LatestDownloads);    
+    priorDate = comparison.PriorDate;
+}
 
 foreach (var authorGrp in projects.GroupBy(item => item.AuthorText))
 {
@@ -40,12 +48,13 @@ foreach (var authorGrp in projects.GroupBy(item => item.AuthorText))
         var output = $"- {prj.packageId.PadRight(maxWidth, '.')}{prj.totalDownloads.ToString("n0").PadLeft(maxDownloadChars, '.')}";
         if (deltas.TryGetValue(prj.packageId, out int delta))
         {
-            output += $" ( +{delta})";
+            output += $" ( +{delta} since {priorDate})";
         }
         Console.WriteLine(output);
     }    
 }
 
+// add "pause=true" to command line
 if (config.WaitForInput())
 {
     Console.WriteLine();
