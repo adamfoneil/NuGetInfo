@@ -5,3 +5,5 @@ This is just a little vanity project to monitor some of my NuGet package downloa
 The meat of it is [Program.cs](https://github.com/adamfoneil/NuGetInfo/blob/master/NuGetInfo.CLI/Program.cs)
 
 Here is the [Refit interface](https://github.com/adamfoneil/NuGetInfo/blob/master/NuGetInfo.Client/Interfaces/INuGetClient.cs)
+
+Here is the [caching and count analysis](https://github.com/adamfoneil/NuGetInfo/blob/master/NuGetInfo.CLI/Program_methods.cs)
