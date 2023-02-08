@@ -3,3 +3,5 @@ This is just a little vanity project to monitor some of my NuGet package downloa
 ![image](https://user-images.githubusercontent.com/4549398/217257092-bd2123c4-84dc-4264-a591-d2f3a886f26c.png)
 
 The meat of it is [Program.cs](https://github.com/adamfoneil/NuGetInfo/blob/master/NuGetInfo.CLI/Program.cs)
+
+Here is the [Refit interface](https://github.com/adamfoneil/NuGetInfo/blob/master/NuGetInfo.Client/Interfaces/INuGetClient.cs)
