@@ -13,7 +13,8 @@ httpClient.BaseAddress = new Uri("https://azuresearch-usnc.nuget.org/");
 var client = new NuGetInfoClient(httpClient);
 var projects = await client.SearchPackageIdsAsync(new []
 {
-    "Dapper.QX",    
+    "Dapper.Entities.SqlServer",
+    "Dapper.QX", 
     "AO.Models",
     "DataTables.Library",
     "Excel2SqlServer",
