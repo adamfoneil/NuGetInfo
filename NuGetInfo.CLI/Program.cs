@@ -21,7 +21,8 @@ var projects = await client.SearchPackageIdsAsync(new []
     "SqlServer.LocalDb.Testing",
     "AO.Dapper.Repository.SqlServer",
     "AO.Mailgun",
-    "AO.Smtp2Go"
+    "AO.Smtp2Go",
+    "Ensync.SqlServer"
 });
 
 var cache = new AppData();
