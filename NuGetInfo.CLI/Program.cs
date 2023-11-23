@@ -7,8 +7,10 @@ builder.AddCommandLine(args);
 var config = builder.Build();
 
 //var httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler()));
-var httpClient = new HttpClient();
-httpClient.BaseAddress = new Uri("https://azuresearch-usnc.nuget.org/");
+var httpClient = new HttpClient
+{
+	BaseAddress = new Uri("https://azuresearch-usnc.nuget.org/")
+};
 
 var client = new NuGetInfoClient(httpClient);
 var projects = await client.SearchPackageIdsAsync(new []
@@ -30,13 +32,13 @@ await CacheDownloadCountsAsync(projects, cache);
 var files = GetCacheFiles(cache);
 DateOnly? priorDate = null;
 
-Dictionary<string, int> deltas = new();
+Dictionary<string, int> deltas = [];
 
 if (files.Count() >= 2)
 {
-    var comparison = await GetComparisonFilesAsync(files);
-    deltas = GetDownloadCountDeltas(comparison.PriorDownloads, comparison.LatestDownloads);    
-    priorDate = comparison.PriorDate;
+    var (PriorDate, PriorDownloads, LatestDownloads) = await GetComparisonFilesAsync(files);
+    deltas = GetDownloadCountDeltas(PriorDownloads, LatestDownloads);    
+    priorDate = PriorDate;
 }
 
 foreach (var authorGrp in projects.GroupBy(item => item.AuthorText))
@@ -67,18 +69,14 @@ if (config.WaitForInput())
 /// <summary>
 /// help from https://stackoverflow.com/a/18925296/2023653
 /// </summary>
-class LoggingHandler : DelegatingHandler
+class LoggingHandler(HttpMessageHandler handler) : DelegatingHandler(handler)
 {
-    public LoggingHandler(HttpMessageHandler handler) : base(handler)
-    {
-    }
-
-    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+	protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         Console.WriteLine(request.ToString());
         if (request.Content != null)
         {
-            Console.WriteLine(await request.Content.ReadAsStringAsync());
+            Console.WriteLine(await request.Content.ReadAsStringAsync(cancellationToken));
         }
 
         return await base.SendAsync(request, cancellationToken);
