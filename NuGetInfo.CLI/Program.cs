@@ -7,12 +7,8 @@ builder.AddCommandLine(args);
 var config = builder.Build();
 
 //var httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler()));
-var httpClient = new HttpClient
-{
-	BaseAddress = NuGetInfoClient.BaseUri
-};
 
-var client = new NuGetInfoClient(httpClient);
+var client = new NuGetInfoClient();
 var projects = await client.SearchPackageIdsAsync(
 [
     "Dapper.Entities.SqlServer",
