@@ -6,7 +6,11 @@ namespace NuGetInfo.Client
 {
     public class NuGetInfoClient
     {
-        private readonly INuGetClient _api;
+        public const string BaseUrl = "https://azuresearch-usnc.nuget.org/";
+
+        public static Uri BaseUri => new(BaseUrl);
+
+		private readonly INuGetClient _api;
 
         public NuGetInfoClient(HttpClient httpClient)
         {
@@ -15,7 +19,7 @@ namespace NuGetInfo.Client
 
         public NuGetInfoClient()
         {
-            _api = RestService.For<INuGetClient>("https://azuresearch-usnc.nuget.org/");
+            _api = RestService.For<INuGetClient>(BaseUrl);
         }
 
         public async Task<IEnumerable<Project>> SearchProjectsAsync(string query) => (await _api.SearchAsync(query)).data;

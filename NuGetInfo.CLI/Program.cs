@@ -9,12 +9,12 @@ var config = builder.Build();
 //var httpClient = new HttpClient(new LoggingHandler(new HttpClientHandler()));
 var httpClient = new HttpClient
 {
-	BaseAddress = new Uri("https://azuresearch-usnc.nuget.org/")
+	BaseAddress = NuGetInfoClient.BaseUri
 };
 
 var client = new NuGetInfoClient(httpClient);
-var projects = await client.SearchPackageIdsAsync(new []
-{
+var projects = await client.SearchPackageIdsAsync(
+[
     "Dapper.Entities.SqlServer",
     "Dapper.QX", 
     "AO.Models",
@@ -25,7 +25,7 @@ var projects = await client.SearchPackageIdsAsync(new []
     "AO.Mailgun",
     "AO.Smtp2Go",
     "Ensync.SqlServer"
-});
+]);
 
 var cache = new AppData();
 await CacheDownloadCountsAsync(projects, cache);
